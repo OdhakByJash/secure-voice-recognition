@@ -9,4 +9,3 @@ def input_audio():
     )
     sd.wait()
     return [sampling_frequency,time_period,recording]
-print(input_audio())
