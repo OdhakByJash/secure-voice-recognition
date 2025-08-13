@@ -7,5 +7,6 @@ def input_audio():
         samplerate=sampling_frequency,
         channels=1
     )
+    sd.wait()
     return [sampling_frequency,time_period,recording]
 print(input_audio())
