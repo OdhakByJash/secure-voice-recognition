@@ -1,8 +1,18 @@
+import sounddevice as sd
 from mysql.connector import connect
-import os
 from dotenv import load_dotenv
-from audio_input.input import input_audio
-def register_user(first_name,last_name,email,password):
+import os
+def input_audio():
+    sampling_frequency = 48000
+    time_period = 7
+    recording = sd.rec(
+        int(sampling_frequency*time_period),
+        samplerate=sampling_frequency,
+        channels=1
+    )
+    sd.wait()
+    return [sampling_frequency,time_period,recording]
+def register_user(first_name,last_name,username,email,password):
     try:
         load_dotenv()
         db = connect(
@@ -13,8 +23,9 @@ def register_user(first_name,last_name,email,password):
         )
         cursor = db.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS user (first_name VARCHAR(50), last_name VARCHAR(50), username VARCHAR(50), email VARCHAR(50), password VARCHAR(50), audio LONGBLOB);")
-        audio_array = input_audio()
-        cursor.execute("")
+        audio = input_audio()[2]
+        audio_array = audio.tobytes()
+        cursor.execute(f"INSERT INTO user VALUES ('{first_name}','{last_name}','{username}','{email}','{password}','{audio_array}')")
     except Exception as e:
         return str(e)
-register_user()
+print(register_user("jash","upadhyay","bitsbuild","jashupadhyay.java@gmail.com","password"))
