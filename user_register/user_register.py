@@ -2,16 +2,6 @@ import sounddevice as sd
 from mysql.connector import connect
 from dotenv import load_dotenv
 import os
-def input_audio():
-    sampling_frequency = 48000
-    time_period = 7
-    recording = sd.rec(
-        int(sampling_frequency*time_period),
-        samplerate=sampling_frequency,
-        channels=1
-    )
-    sd.wait()
-    return [sampling_frequency,time_period,recording]
 def register_user(first_name,last_name,username,email,password):
     try:
         load_dotenv()
@@ -22,10 +12,29 @@ def register_user(first_name,last_name,username,email,password):
             database=os.getenv('DATABASE')
         )
         cursor = db.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS user (first_name VARCHAR(50), last_name VARCHAR(50), username VARCHAR(50), email VARCHAR(50), password VARCHAR(50), audio LONGBLOB);")
-        audio = input_audio()[2]
-        audio_array = audio.tobytes()
-        cursor.execute(f"INSERT INTO user VALUES ('{first_name}','{last_name}','{username}','{email}','{password}','{audio_array}')")
+        cursor.execute("""
+                       CREATE TABLE IF NOT EXISTS user(
+                       first_name VARCHAR(50) NOT NULL, 
+                       last_name VARCHAR(50) NOT NULL, 
+                       username VARCHAR(50), 
+                       email VARCHAR(50) NOT NULL, 
+                       password VARCHAR(50) NOT NULL, 
+                       audio VARBINARY(MAX) NOT NULL, 
+                       UNIQUE(email),
+                       PRIMARY KEY (username)
+                       );
+                       """)
+        audio = "placeholder"
+        cursor.execute(f"""
+                       INSERT INTO user VALUES (
+                       '{first_name}',
+                       '{last_name}',
+                       '{username}',
+                       '{email}',
+                       '{password}',
+                       '{audio}'
+                       );
+                       """)
     except Exception as e:
         return str(e)
 print(register_user("jash","upadhyay","bitsbuild","jashupadhyay.java@gmail.com","password"))
