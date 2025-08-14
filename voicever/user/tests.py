@@ -70,9 +70,9 @@ class UserTesting(APITestCase):
     def test_delete_user_success(self):
         token = Token.objects.get(user__username="bitsbuild1")
         self.client.credentials(HTTP_AUTHORIZATION='Token '+str(token.key))
-        response = self.client.delete(reverse('delete'))
+        response = self.client.post(reverse('delete'))
         self.assertEqual(response.status_code,HTTP_200_OK)
     def test_delete_user_failure(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+'')
-        response = self.client.delete(reverse('delete'))
+        response = self.client.post(reverse('delete'))
         self.assertEqual(response.status_code,HTTP_401_UNAUTHORIZED)
