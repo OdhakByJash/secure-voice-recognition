@@ -15,7 +15,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'user'
+    'user',
+    'voice_recognition'
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
