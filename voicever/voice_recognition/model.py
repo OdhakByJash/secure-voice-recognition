@@ -10,4 +10,3 @@ class AuthenticUserVoice(Model):
                 name='one-sample-one-user-unique'
             )
         ]
-    
