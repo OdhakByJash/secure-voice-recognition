@@ -1,3 +1,3 @@
 from django.contrib import admin
-from voice_recognition.model import AuthenticUserVoice
+from voice_recognition.models import AuthenticUserVoice
 admin.site.register(AuthenticUserVoice)
