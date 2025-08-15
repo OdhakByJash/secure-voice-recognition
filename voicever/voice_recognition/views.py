@@ -10,7 +10,7 @@ def register(request):
     try:
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = AuthenticUserVoice.objects.create(
+        AuthenticUserVoice.objects.create(
             sample = serializer.validated_data['sample'],
             user = request.user
         )
