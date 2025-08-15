@@ -1,5 +1,13 @@
 import sounddevice as sd
-import wavio as wv
 from scipy.io.wavfile import write
 def create_audio_file():
-    pass
+    sampling_frequency = 48000
+    time_period = 5
+    recording = sd.rec(
+        frames=int(sampling_frequency*time_period),
+        samplerate=sampling_frequency,
+        channels=1
+    )
+    sd.wait()
+    write("sample.wav",sampling_frequency,recording)
+create_audio_file()
