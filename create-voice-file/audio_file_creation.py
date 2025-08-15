@@ -4,7 +4,7 @@ def create_audio_file():
     sampling_frequency = 48000
     time_period = 5
     recording = sd.rec(
-        frames=int(sampling_frequency*time_period),
+        int(sampling_frequency*time_period),
         samplerate=sampling_frequency,
         channels=1
     )
