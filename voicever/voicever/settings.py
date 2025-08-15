@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")
 SECRET_KEY = os.getenv('DSK')
 DEBUG = True
 ALLOWED_HOSTS = []
