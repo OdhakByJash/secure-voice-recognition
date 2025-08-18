@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
 from voice_recognition.serializer import VoiceRecogntionSerializer
-from voice_recognition.models import AuthenticUserVoice
+from voice_recognition.models import RegistrationUserVoice,VerificationUserVoice
 import torchaudio
 from speechbrain.pretrained import SpeakerRecognition
 from django.conf.global_settings import MEDIA_ROOT
@@ -13,7 +13,7 @@ def register(request):
     try:
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        AuthenticUserVoice.objects.create(
+        RegistrationUserVoice.objects.create(
             sample = serializer.validated_data['sample'],
             user = request.user
         )
@@ -35,6 +35,10 @@ def verify(request):
     try:
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        VerificationUserVoice.objects.create(
+            sample = serializer.validated_data['sample'],
+            user = request.user
+        )
         verification = SpeakerRecognition.from_hparams(
             source="speechbrain/spkrec-ecapa-voxceleb"
         )

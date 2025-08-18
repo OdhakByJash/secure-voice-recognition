@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from random import choice,randint
 import whisper
-from voice_recognition.models import AuthenticUserVoice
 def generator():
     cities = [
     "New York", "London", "Paris", "Tokyo", "Mumbai",
