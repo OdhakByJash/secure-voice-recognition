@@ -2,7 +2,7 @@ from django.db.models import Model,UUIDField,CharField,OneToOneField,CASCADE
 from django.contrib.auth.models import User
 from random import randint,choice
 from uuid import uuid4
-class Challenge(Model):
+class ChallengeResponse(Model):
     id = UUIDField(
         default=uuid4,
         primary_key=True,
