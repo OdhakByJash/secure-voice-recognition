@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
 from voice_recognition.serializer import VoiceRecogntionSerializer
 from voice_recognition.models import AuthenticUserVoice
+import torchaudio
+from speechbrain.pretrained import SpeakerRecognition
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def register(request):
@@ -26,10 +28,27 @@ def register(request):
                 "Error":str(e)
             },status=HTTP_400_BAD_REQUEST
         )
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def verify(request):
     try:
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response()
+        verification = SpeakerRecognition.from_hparams(
+            source="speechbrain/spkrec-ecapa-voxceleb"
+        )
+        score,pred = verification.verify_files(
+            serializer.validated_data['sample'],
+            AuthenticUserVoice.objects.get(user=request.user).sample
+        )
+        if pred:
+            return Response("Match",status=HTTP_200_OK)
+        else:
+            return Response("Match Fail",status=HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response()
+        return Response(
+            {
+                "Status":"Error",
+                "Error":str(e)
+            },status=HTTP_400_BAD_REQUEST
+        )
