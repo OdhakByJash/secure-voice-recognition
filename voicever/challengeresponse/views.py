@@ -1,10 +1,12 @@
 from challengeresponse.models import ChallengeResponse
-from challengeresponse.serializers import ResponseSerializer
+from voice_recognition.serializer import VoiceRecogntionSerializer
 from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from random import choice,randint
+import whisper
+from voice_recognition.models import AuthenticUserVoice
 def generator():
     cities = [
     "New York", "London", "Paris", "Tokyo", "Mumbai",
@@ -46,14 +48,16 @@ def challenege_view(request):
 @permission_classes([IsAuthenticated])
 def response_view(request):
     try:
+        model = whisper.load_model("base")
         data = request.data
-        response = ResponseSerializer(data=data)
+        response = VoiceRecogntionSerializer(data=data)
         response.is_valid(raise_exception=True)
+        result = model.transcribe(response.validated_data['sample'])
         challenge = ChallengeResponse.objects.get(user=request.user)
         if not challenge:
             return Response("Challenge Not Assigned To User, Please Generate A Challenge",
                             status=HTTP_400_BAD_REQUEST)
-        if response.validated_data['response'] == challenge.response_message:
+        if result == challenge.response_message:
             challenge.delete()
             return Response("Authentication Successful",status=HTTP_200_OK)
         else:
