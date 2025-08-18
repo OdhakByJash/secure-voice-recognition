@@ -20,4 +20,5 @@ class ChallengeResponse(Model):
         related_name="challenge",
         on_delete=CASCADE
     )
-    
+    def __str__(self):
+        return self.user.username
