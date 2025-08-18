@@ -27,4 +27,9 @@ def register(request):
             },status=HTTP_400_BAD_REQUEST
         )
 def verify(request):
-    pass
+    try:
+        serializer = VoiceRecogntionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response()
+    except Exception as e:
+        return Response()
