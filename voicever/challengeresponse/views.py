@@ -50,9 +50,14 @@ def response_view(request):
         response = ResponseSerializer(data=data)
         response.is_valid(raise_exception=True)
         challenge = ChallengeResponse.get(user=request.user)
+        if not challenge:
+            return Response("Challenge Not Assigned To User, Please Generate A Challenge",
+                            status=HTTP_400_BAD_REQUEST)
         if response.validated_data['response'] == challenge.response_message:
+            challenge.delete()
             return Response("Authentication Successful",status=HTTP_200_OK)
         else:
+            challenge.delete()
             return Response("Authentication Not Successful",status=HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({
