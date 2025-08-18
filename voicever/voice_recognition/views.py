@@ -45,7 +45,7 @@ def verify(request):
         )
         signal1, fs1 = torchaudio.load(verification_instance.sample.path)
         signal2, fs2 = torchaudio.load(registration_instance.sample.path)
-        score,pred = verification.verify_files(signal1,signal2)
+        score,pred = verification.verify_batch(signal1,signal2)
         if pred:
             verification_instance.delete()
             return Response("Match",status=HTTP_200_OK)
