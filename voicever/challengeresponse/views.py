@@ -21,7 +21,7 @@ def generator():
     boolean_value = choice(boolean)
     list_challenges = [
         [f"Say The Result Of This Expression: sum of{a} and {b} is?",a+b],
-        [f"Say: I Live In {city}",city],
+        [f"Say: I Live In {city}",f"Say: I Live In {city}"],
         [f"Say: {boolean_value}",boolean_value]
     ]
     return choice(list_challenges)
