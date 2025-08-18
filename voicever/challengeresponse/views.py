@@ -45,7 +45,19 @@ def challenege_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def response_view(request):
-    data = request.data
-    response = ResponseSerializer(data=data)
-    response.is_valid(raise_exception=True)
-    
+    try:
+        data = request.data
+        response = ResponseSerializer(data=data)
+        response.is_valid(raise_exception=True)
+        challenge = ChallengeResponse.get(user=request.user)
+        if response.validated_data['response'] == challenge.response_message:
+            return Response("Authentication Successful",status=HTTP_200_OK)
+        else:
+            return Response("Authentication Not Successful",status=HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+            {
+                "Status":"Error",
+                "Error":str(e)
+            }
+        },status=HTTP_400_BAD_REQUEST)
