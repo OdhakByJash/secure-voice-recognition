@@ -57,7 +57,7 @@ def response_view(request):
         if not challenge:
             return Response("Challenge Not Assigned To User, Please Generate A Challenge",
                             status=HTTP_400_BAD_REQUEST)
-        if result == challenge.response_message:
+        if result["text"] == challenge.response_message:
             challenge.delete()
             return Response("Authentication Successful",status=HTTP_200_OK)
         else:
