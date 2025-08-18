@@ -6,6 +6,7 @@ from voice_recognition.serializer import VoiceRecogntionSerializer
 from voice_recognition.models import AuthenticUserVoice
 import torchaudio
 from speechbrain.pretrained import SpeakerRecognition
+from django.conf.global_settings import MEDIA_ROOT
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def register(request):
@@ -38,8 +39,8 @@ def verify(request):
             source="speechbrain/spkrec-ecapa-voxceleb"
         )
         score,pred = verification.verify_files(
-            serializer.validated_data['sample'],
-            AuthenticUserVoice.objects.get(user=request.user).sample
+                "",
+                ""
         )
         if pred:
             return Response("Match",status=HTTP_200_OK)
