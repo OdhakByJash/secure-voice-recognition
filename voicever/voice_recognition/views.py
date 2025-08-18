@@ -35,22 +35,26 @@ def verify(request):
     try:
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        VerificationUserVoice.objects.create(
+        verification_instance = VerificationUserVoice.objects.create(
             sample = serializer.validated_data['sample'],
             user = request.user
         )
+        registration_instance = RegistrationUserVoice.objects.get(user=request.user)
         verification = SpeakerRecognition.from_hparams(
             source="speechbrain/spkrec-ecapa-voxceleb"
         )
-        score,pred = verification.verify_files(
-                "",
-                ""
-        )
+        signal1, fs1 = torchaudio.load(verification_instance.sample.path)
+        signal2, fs2 = torchaudio.load(registration_instance.sample.path)
+        score,pred = verification.verify_files(signal1,signal2)
         if pred:
+            verification_instance.delete()
             return Response("Match",status=HTTP_200_OK)
         else:
+            verification_instance.delete()
             return Response("Match Fail",status=HTTP_400_BAD_REQUEST)
     except Exception as e:
+        if verification_instance:
+            verification_instance.delete()
         return Response(
             {
                 "Status":"Error",
