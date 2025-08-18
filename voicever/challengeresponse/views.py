@@ -1,7 +1,11 @@
-from rest_framework.decorators import api_view
-from challengeresponse.models import Challenge
+from challengeresponse.models import ChallengeResponse
+from challengeresponse.serializers import ResponseSerializer
+from rest_framework.status import HTTP_200_OK,HTTP_400_BAD_REQUEST
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from random import choice,randint
-def challenge():
+def generator():
     cities = [
     "New York", "London", "Paris", "Tokyo", "Mumbai",
     "Los Angeles", "Chicago", "Toronto", "Berlin", "Sydney",
@@ -22,5 +26,26 @@ def challenge():
     ]
     return choice(list_challenges)
 @api_view(['POST'])
-def challenege(request):
+@permission_classes([IsAuthenticated])
+def challenege_view(request):
+    try:
+        challenge_response_output = generator()
+        cha = ChallengeResponse.objects.create(
+            user = request.user,
+            challenge_message = challenge_response_output[0],
+            response_message = challenge_response_output[1]
+        )
+        return Response(cha.challenge_message,status=HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {
+                "Status":"Challenge Generation Failed",
+                "Error":str(e)
+            },status=HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def response_view(request):
+    data = request.data
+    response = ResponseSerializer(data=data)
+    response.is_valid(raise_exception=True)
     
