@@ -33,6 +33,7 @@ def register(request):
 @permission_classes([IsAuthenticated])
 def verify(request):
     try:
+        torchaudio.set_audio_backend("")
         serializer = VoiceRecogntionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         verification_instance = VerificationUserVoice.objects.create(
